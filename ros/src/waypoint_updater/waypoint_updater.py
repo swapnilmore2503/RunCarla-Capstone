@@ -3,6 +3,7 @@
 # 
 
 import rospy
+import numpy as np
 from geometry_msgs.msg import PoseStamped
 from styx_msgs.msg import Lane, Waypoint
 from std_msgs.msg import Int32
@@ -26,7 +27,6 @@ as well as to verify your TL classifier.
 TODO (for Yousuf and Aaron): Stopline location for each traffic light.
 '''
 
-LOOKAHEAD_WPS = 200 # Number of waypoints we will publish. You can change this number
 
 
 '''
@@ -50,10 +50,15 @@ Topic : Msg Type
 /final_waypoints  :  styx_msgs/Lane
 
 
+2. Final version
+
+
 '''
 
 # Rate in Hz
 PUBLISHING_RATE = 50
+LOOKAHEAD_WPS = 200 # Number of waypoints we will publish. You can change this number
+
 
 class WaypointUpdater(object):
     def __init__(self):
@@ -63,8 +68,8 @@ class WaypointUpdater(object):
         rospy.Subscriber('/base_waypoints', Lane, self.waypoints_cb)
 
         # TODO: Add a subscriber for /traffic_waypoint and /obstacle_waypoint below
-        #rospy.Subscriber('/traffic_waypoint', Int32, self.traffic_cb, queue_size=1)
-        #rospy.Subscriber('/obstacle_waypoint', Int32, self.obstacle_cb, queue_size=1 )
+        rospy.Subscriber('/traffic_waypoint', Int32, self.traffic_cb, queue_size=1)
+        rospy.Subscriber('/obstacle_waypoint', Int32, self.obstacle_cb, queue_size=1 )
 
         self.final_waypoints_pub = rospy.Publisher('final_waypoints', Lane, queue_size=1)
 
@@ -128,7 +133,7 @@ class WaypointUpdater(object):
         self.base_waypoints = waypoints
         # Setup the Kd Tree which has log(n) complexity
         if not self.waypoints_2d:
-            self.waypoints_2d = [[waypoint.pose.pose.position.x, waypoint.pose.pose.position.y]] for waypoint in waypoints.waypoint
+            self.waypoints_2d = [[waypoint.pose.pose.position.x, waypoint.pose.pose.position.y] for waypoint in waypoints.waypoints]
             self.waypoint_tree = KDTree(self.waypoints_2d)
 
 
