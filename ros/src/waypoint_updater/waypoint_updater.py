@@ -90,7 +90,7 @@ class WaypointUpdater(object):
         # TODO: Add other member variables you need below
         self.base_lane = None
         self.pose = None
-        sefl.stopline_wp_idx = -1
+        self.stopline_wp_idx = -1
         self.waypoints_2d = None
         self.waypoint_tree = None
         # Gives us control over the publishing frequency
