@@ -141,7 +141,7 @@ class WaypointUpdater(object):
         base_waypoints = self.base_lane.waypoints[closest_idx:farthest_idx]
 
         # If no traffic light was detected, publish the base_waypoints as it is
-        if self.stopline_wp_idx == -1 or (self.stopline_wp_idx >= farthest_idx):
+        if (self.stopline_wp_idx == -1) or (self.stopline_wp_idx >= farthest_idx):
             lane.waypoints = base_waypoints
         else:
             lane.waypoints = self.decelerate_waypoints(base_waypoints, closest_idx)
@@ -178,7 +178,7 @@ class WaypointUpdater(object):
 
     # Latched callback, only called once (base waypoints are static)
     def waypoints_cb(self, waypoints):
-        self.base_waypoints = waypoints
+        self.base_lane = waypoints
         # Setup the Kd Tree which has log(n) complexity
         if not self.waypoints_2d:
             self.waypoints_2d = [[waypoint.pose.pose.position.x, waypoint.pose.pose.position.y] for waypoint in waypoints.waypoints]
@@ -188,6 +188,7 @@ class WaypointUpdater(object):
     def traffic_cb(self, msg):
         # TODO: Callback for /traffic_waypoint message. Implement
         self.stopline_wp_idx = msg.data
+        
 
     def obstacle_cb(self, msg):
         # TODO: Callback for /obstacle_waypoint message. We will implement it later
