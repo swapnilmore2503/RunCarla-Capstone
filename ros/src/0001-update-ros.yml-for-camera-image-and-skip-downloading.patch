@@ -1,19 +1,19 @@
-From 2b6009c6bb2995b5995a8e4cd8592adaea2ae34f Mon Sep 17 00:00:00 2001
+From 72afbf4a2f52221336f1509fec5b1df04c42689b Mon Sep 17 00:00:00 2001
 From: Shridhar Rasal <rasal1710@gmail.com>
 Date: Sun, 10 Jun 2018 13:58:18 +0530
 Subject: [PATCH] update ros.yml for camera image and skip downloading all
  weights
 
 ---
- darknet_ros/CMakeLists.txt  | 28 ++++++++++++++--------------
+ darknet_ros/CMakeLists.txt  | 29 +++++++++++++++--------------
  darknet_ros/config/ros.yaml |  2 +-
- 2 files changed, 15 insertions(+), 15 deletions(-)
+ 2 files changed, 16 insertions(+), 15 deletions(-)
 
 diff --git a/darknet_ros/CMakeLists.txt b/darknet_ros/CMakeLists.txt
-index 234eec4..237db3e 100644
+index 234eec4..9e65c40 100644
 --- a/darknet_ros/CMakeLists.txt
 +++ b/darknet_ros/CMakeLists.txt
-@@ -236,13 +236,13 @@ install(
+@@ -236,15 +236,16 @@ install(
  )
  
  # Download yolov2-tiny.weights
@@ -33,8 +33,11 @@ index 234eec4..237db3e 100644
 +#endif()
  
  # Download yolov3.weights
++set(PATH "${CMAKE_CURRENT_SOURCE_DIR}/yolo_network_config/weights")
  set(FILE "${PATH}/yolov3.weights")
-@@ -258,13 +258,13 @@ endif()
+ message(STATUS "Checking and downloading yolov3.weights if needed ...")
+ if (NOT EXISTS "${FILE}")
+@@ -258,13 +259,13 @@ endif()
  
  if(CATKIN_ENABLE_TESTING)
    # Download yolov2.weights

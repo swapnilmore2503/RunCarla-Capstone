@@ -40,7 +40,7 @@ cd ros/src
 git clone --recursive git@github.com:leggedrobotics/darknet_ros.git
 ```
 
-##### apply yml and make changes to darknet_ros
+##### Apply yml and make changes to darknet_ros
 ``` bash
 cp 0001-update-ros.yml-for-camera-image-and-skip-downloading.patch darknet_ros/
 cd darknet_ros
