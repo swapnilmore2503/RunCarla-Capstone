@@ -22,9 +22,9 @@ In this project, we developed software to drive Carla, the Udacity autonomous ca
 Please Note: For successful installation and implementation, it is recommended to use ROS Kinetic on Ubuntu 16.04 running on a system with i7 CPU, 16GB of RAM, Nvidia GTX 1070 or better with CUDA 9.0 or above drivers installed.
 
 
-#####Clone/Download [this repo](https://github.com/namoshri/RunCarla-Capstone)
+##### Clone/Download [this repo](https://github.com/namoshri/RunCarla-Capstone)
 
-#####Install python dependencies
+##### Install python dependencies
 ```bash
 cd RunCarla-Capstone
 pip install -r requirements.txt
@@ -38,13 +38,13 @@ git clone --recursive git@github.com:leggedrobotics/darknet_ros.git
 cd ../
 ```
 
-#####Make and run styx
+##### Make and run styx
 ```bash
 catkin_make
 source devel/setup.sh
 roslaunch launch/styx.launch
 ```
-#####Run the simulator
+##### Run the simulator
 ------------
 
 ## ROS Architecture
