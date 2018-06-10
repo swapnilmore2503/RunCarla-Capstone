@@ -23,6 +23,9 @@ Please Note: For successful installation and implementation, it is recommended t
 
 
 ##### Clone/Download [this repo](https://github.com/namoshri/RunCarla-Capstone)
+```bash
+git clone https://github.com/namoshri/RunCarla-Capstone.git
+```
 
 ##### Install python dependencies
 ```bash
