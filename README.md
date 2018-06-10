@@ -15,26 +15,26 @@ This is the project repo for the final project of the Udacity Self-Driving Car N
 
 ## Introduction
 
-In this project, we developed software to drive autonomously Carla, Udacity autonomous car. The autonomous car is, in essence, a robot. The project's goal is to provide the robotic car with the ability to plan a route and drive the route. During the drive, the car will drive smoothly while detecting traffic lights, react accordingly and drive within the lanes 
+In this project, we developed software to drive Carla, the Udacity autonomous car. The autonomous car is, in essence, a robot. The project's goal is to provide the robotic vehicle with the ability to plan a route and drive the course. During the drive, the car will drive smoothly while detecting traffic lights, react accordingly and drive within the lanes.
 
 
 ## ROS Architecture
 
 Below is the RunCarla ROS node architecture with the publish and subscribe topics. 
-![alt text](./imgs/RunCarlaDiag.png)
 
+![alt text](./imgs/RunCarlaDiag.png)
 
 ## Planning Subsystem
 
 ### Waypoint Node
 
-We implemented two key behaviors in the waypoint node.
+We implemented two behaviors in the waypoint node.
 1. Generate the next 200 waypoints.
 2. If a red traffic light is ahead, decelerate the car just before the traffic light stop line.
 
-A key responsibility of the Waypoint Node is to publish the next 200 upcoming waypoints ahead of the car. With the waypoints for the track At the start of the simulation, the waypoints for the road are published. Based on the current car position, the Waypoint Node will find the nearest waypoint to the car and publish the 200 waypoints after the closest point. We had to ensure that the point was ahead of the car and not behind the car. 
+A Waypoint Node responsibility is to publish the next 200 upcoming waypoints ahead of the car.  At the start of the simulation, the simulator broadcasts the course's waypoints. Based on the current car position, the Waypoint Node will find the nearest waypoint to the car and post the 200 waypoints after the closest point. We had to ensure that the waypoint was ahead of the car and not behind. 
 
-The other major responsibility address is to respond to red traffic light ahead of the car. Given, the red light detection from the TL_Detector, the Waypoint Node will create waypoints to decelerate the car. This is done below. Based on the stop line point provided by the TL detector, we compute the distance from the closest waypoint to the car to two points before the stop line waypoint. The two points before the stop line give us a buffer to stop. Essentially, it computes the distance to the stop location, and compute the velocity based on an empirically determined formula.
+Another responsibility that is vital addresses the situation of a red traffic light ahead of the car. Given, the red light detection from the TL_Detector, the Waypoint Node will create waypoints to decelerate the vehicle. The code below produces the waypoints for deceleration. Based on the stop line point provided by the TL detector, we compute the distance from the closest waypoint to the car to two points before the stop line waypoint. The two points before the stop line give us a buffer to stop. Essentially, it computes the distance to the stop location, and calculate the velocity based on an empirically determined formula.
 
 **...Need some explanation of the twist.twist.linear.x...**
 
@@ -94,22 +94,45 @@ Subscribes to the topics /current_velocity, /vehicle/dbw_enabled, /final_waypoin
 The controller implements a PID controller for the throttle.
 
 
-
-
 ## Perception Subsystem
 
-The perception subsystem comprises a Darknet ROS Node the Darknet a YOLO Deep Learning CNN, [Darknet](https://pjreddie.com/darknet/yolo/), architecture that is adapted for the ROS system and our TL_Detector Node that contains logic for generating a traffic light waypoint and traffic light state detection (RED, YELLOW, GREEN, UNKNOWN).
+For this project, the perception subsystem identifies the traffic lights in a video feed from the car's camera. Its job is to provide the recognized traffic light's state and nearest waypoint.
+
+RunCarla's perception subsystem comprises a Darknet ROS Node and our TL_Detector Node.
+
+The Darknet ROS Node is a YOLO real-time object detection system, [Darknet][1], adapted for a ROS system. The TL_Detector node contains logic for generating a traffic light waypoint and traffic light state detection (RED, YELLOW, GREEN, UNKNOWN).
+
+### Traffic Light detection with YOLOv3
+
+YOLO is a real-time objection detection algorithm developed by Joseph Redman. YOLO is trained on the [COCO Dataset][5] and classifies traffic lights among other objects. The acronym expands to [You Only Look Once][6] which means that the image is scanned once during processing, i.e., all steps in the processing is applied as the image is scanned. In contrast, sliding window techniques may scan the image multiple times with different sized windows. A single pass is more efficient, than mulitple passes. 
+
+YOLOv3 is a version of YOLO that takes 320 x 320 image and produces a class and bounding box for all identified objects. The table below lists the YOLOv3 architecture layout. It is a 53 layer CNN that can predict 80 classes.  
+
+From the [original paper][3].
+![YOLOv3](./imgs/YOLOv3_CNN.PNG)
+
+YOLOv3 generates candidate features and bounding boxes at three different scales that are combined into a feature vector as input to the classification step as shown in the diagram below. See this web article for more insight, [What’s new in YOLO v3?][8].
+
+Architectural diagram of Darknet-53 from [web article][8].
+![YOLOv3](./imgs/YOLOv3Arch.png)
+
+
+We selected Darknet YOLOv3 for the following reasons:
+- Detects traffic lights
+- Provides the required information - the object's name and bounding box
+- Pretrained and ready to use
+- ROS implementation was available
+- Has high accuracy
+- Performance 30 FPS (frames per second) on Titan X
+
 
 ### Darknet ROS Node
 
-The [Darknet ROS node](https://github.com/leggedrobotics/darknet_ros/). It is a you look only once, YOLO, approach to build a realtime object detector with 80 classes. It has 53 layers, see below.
-![YOLOv3](./imgs/YOLOV3_CNN.PNG)
+The ROS implementation is found here: [Darknet ROS node][2]. Darknet uses several messages. For our use, we updated the Darknet node to subscribe to /image_color (via the config file, ros.yaml) and had the TL_Detector node subscribe to the topic /darknet_ros/bounding_boxes.
 
-Darknet uses several messages. For our use, we updated the Darknet node to subscribe to /image_color (via the config file, ros.yaml), and had the TL_Detector node subscribe to the topic /darknet_ros/bounding_boxes.
+The YOLOV3 node publishes results to the topic /darknet/bounding_boxes. 
 
-The Darknet node houses a YOLO V3 CNN object detector that includes traffic lights["YOLOv3: An Incremental Improvement",Redman,2018](https://arxiv.org/abs/1804.02767). The YOLO node publishes the to the topic the bounding boxes of objects it finds in the image:
-
-A bounding box data structure is:
+The bounding box data structure is defined as:
 ```
 string Class
 float64 probability
@@ -120,14 +143,14 @@ int64 ymax
 ```
 where 
 * Class is a string identifying the class. Our interest is in 'traffic light',
-* probability is the confidence the YOLOV3 node has in the the classification,
-* xmin, ymin, xmax, ymas are the absolute coordinates of the bounding box around the classified object.
+* probability is the confidence the YOLOv3 node has in the the classification,
+* xmin, ymin, xmax, ymax are the absolute coordinates of the bounding box around the classified object.
 
 
 ### Traffic Light Detection Node
 Traffic Light detection subscribes to the /image_color and /darknet_ros/bounding_boxes topic. When it receives an image in /image_color it processes the image via the callback function TL_Detector::image_cb.
 
-For the simulator, since we had the waypoints we could use the waypoints to determine the relative position of the traffic light to the car and only process the closest traffic light.
+For the simulator, since we had the waypoints, we could use the waypoints to determine the relative position of the traffic light to the car and only process the closest traffic light.
 
 
 Under real-world driving, we don't have waypoints; We only have the images.
@@ -169,3 +192,26 @@ Below are examples from the site:
 
 
 ![alt text](./imgs/site1_green.png)
+
+
+## References
+
+- [Udacity CarND Capstone][4]
+- [You Only Look Once: Unified, Real-Time Object Detection][6]
+- [YOLOv3: An Incremental Improvement][3]
+- [Darknet Yolo][1]
+- [Darknet ROS][2]
+- [COCO Dataset][5]
+- [Real-time Object Detection with YOLO, YOLOv2 and now YOLOv3][7]
+- [YOLO v3: Better, not Faster, Stronger][8]
+
+
+
+[1]: https://pjreddie.com/darknet/yolo/
+[2]: https://github.com/leggedrobotics/darknet_ros/
+[3]: https://arxiv.org/abs/1804.02767
+[4]: https://github.com/udacity/CarND-Capstone
+[5]: http://cocodataset.org/#home
+[6]: https://arxiv.org/abs/1506.02640
+[7]: https://medium.com/@jonathan_hui/real-time-object-detection-with-yolo-yolov2-28b1b93e2088
+[8]: https://towardsdatascience.com/yolo-v3-object-detection-53fb7d3bfe6b
