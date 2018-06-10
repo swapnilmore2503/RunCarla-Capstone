@@ -4,13 +4,13 @@ This is the project repo for the final project of the Udacity Self-Driving Car N
 
 
 
-| Team RunCarla              
-|:-----------------
-| Shridhar Rasal   
-| Arjun Bhasin      
-| Swapnil More     
-| Manish Ramaswamy 
-| Wilson Fong       
+| Team RunCarla  | email |            
+|:-----------------|:-------|
+| Shridhar Rasal   |rasal1710@gmail.com|
+| Arjun Bhasin     |arjunbhasin.pec@gmail.com| 
+| Swapnil More     |smore@g.clemson.edu|
+| Manish Ramaswamy |manish.ram@gmail.com|
+| Wilson Fong       |wfong443@gmail.com|
 
 
 ## Introduction
@@ -82,16 +82,18 @@ Finally, the nodes to /final_waypoints to be used by the DBW Node.
 
 ## Control Subsystem
 
-### DBW Node
 
-The DBW node is responsible for generating the commands to control the throttle, brake, and steering for the car to stay on the path set by the waypoints.
+### Drive By Wire (DBW) Node
+The DBW node is the final step in the self driving vehicle’s system. At this point we have a target linear and angular velocity and must adjust the vehicle’s controls accordingly. In this project we control 3 things: throttle, steering, brakes. As such, we have 3 distinct controllers to interface with the vehicle.
 
+#### Throttle Controller
+The throttle controller is a simple PID controller that compares the current velocity with the target velocity and adjusts the throttle accordingly. The throttle gains were tuned using trial and error for allowing reasonable acceleration without oscillation around the set-point.
 
-Subscribes to the topics /current_velocity, /vehicle/dbw_enabled, /final_waypoints/
+#### Steering Controller
+This controller translates the proposed linear and angular velocities into a steering angle based on the vehicle’s steering ratio and wheelbase length. To ensure our vehicle drives smoothly, we cap the maximum linear and angular acceleration rates. The steering angle computed by the controller is also passed through a low pass filter to reduce possible jitter from noise in velocity data.
 
-
-
-The controller implements a PID controller for the throttle.
+#### Braking Controller
+This is the simplest controller of the three. It takes takes into consideration the vehicle mass, the wheel radius, as well as the brake_deadband to determine the deceleration force.  Despite the simplicity, we found that it works well to ensure reasonable stopping distances.
 
 
 ## Perception Subsystem
@@ -197,12 +199,11 @@ Below are examples from the site:
 ## References
 
 - [Udacity CarND Capstone][4]
-- [You Only Look Once: Unified, Real-Time Object Detection][6]
-- [YOLOv3: An Incremental Improvement][3]
+- Redmond2016, [You Only Look Once: Unified, Real-Time Object Detection][6]
+- Redmond2018, [YOLOv3: An Incremental Improvement][3]
 - [Darknet Yolo][1]
 - [Darknet ROS][2]
 - [COCO Dataset][5]
-- [Real-time Object Detection with YOLO, YOLOv2 and now YOLOv3][7]
 - [YOLO v3: Better, not Faster, Stronger][8]
 
 
@@ -213,5 +214,4 @@ Below are examples from the site:
 [4]: https://github.com/udacity/CarND-Capstone
 [5]: http://cocodataset.org/#home
 [6]: https://arxiv.org/abs/1506.02640
-[7]: https://medium.com/@jonathan_hui/real-time-object-detection-with-yolo-yolov2-28b1b93e2088
 [8]: https://towardsdatascience.com/yolo-v3-object-detection-53fb7d3bfe6b
