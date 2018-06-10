@@ -20,9 +20,10 @@ class Controller(object):
     def __init__(self, vehicle_mass, fuel_capacity, brake_deadband, decel_limit,
     	accel_limit, wheel_radius, wheel_base, steer_ratio, max_lat_accel, max_steer_angle):
 
-        # TODO: Implement
+        # Create an object with class YawController
         self.yaw_controller = YawController(wheel_base, steer_ratio, 0.1, max_lat_accel, max_steer_angle)
 
+        # Define PID tuning parameters for the throttle controller
         kp = 0.3
         ki = 0.1
         kd = 0.
@@ -44,7 +45,7 @@ class Controller(object):
         self.last_time = rospy.get_time()
 
     def control(self, current_vel, dbw_enabled, linear_vel, angular_vel):
-        # TODO: Change the arg, kwarg list to suit your needs
+        # The function uses the YawController class and PID class to calculate the throttle, steering inputs and applies the brake based on throttle, velocity.
         # Return throttle, brake, steer
 
         if not dbw_enabled:
