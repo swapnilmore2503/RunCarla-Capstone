@@ -6,7 +6,7 @@ This is the project repo for the final project of the Udacity Self-Driving Car N
 
 | Team RunCarla  | email |            
 |:-----------------|:-------|
-| Shridhar Rasal   |rasal1710@gmail.com|
+| Shridhar Rasal  (Lead) |rasal1710@gmail.com|
 | Arjun Bhasin     |arjunbhasin.pec@gmail.com| 
 | Swapnil More     |smore@g.clemson.edu|
 | Manish Ramaswamy |manish.ram@gmail.com|
@@ -17,6 +17,25 @@ This is the project repo for the final project of the Udacity Self-Driving Car N
 
 In this project, we developed software to drive Carla, the Udacity autonomous car. The autonomous car is, in essence, a robot. The project's goal is to provide the robotic vehicle with the ability to plan a route and drive the course. During the drive, the car will drive smoothly while detecting traffic lights, react accordingly and drive within the lanes.
 
+## Installation Instructions
+
+Please Note: For successful installation and implementation, it is recommended to use ROS Kinetic on Ubuntu 16.04 running on a system with i7 CPU, 16GB of RAM, Nvidia GTX 1070 or better with CUDA 9.0 or above drivers installed.
+
+
+1. Clone/Download the repo.
+2. Install python dependencies
+```bash
+cd CarND-Capstone
+pip install -r requirements.txt
+```
+3. Make and run styx
+```bash
+cd ros
+catkin_make
+source devel/setup.sh
+roslaunch launch/styx.launch
+```
+4. Run the simulator
 
 ## ROS Architecture
 
@@ -34,9 +53,7 @@ We implemented two behaviors in the waypoint node.
 
 A Waypoint Node responsibility is to publish the next 200 upcoming waypoints ahead of the car.  At the start of the simulation, the simulator broadcasts the course's waypoints. Based on the current car position, the Waypoint Node will find the nearest waypoint to the car and post the 200 waypoints after the closest point. We had to ensure that the waypoint was ahead of the car and not behind. 
 
-Another responsibility that is vital addresses the situation of a red traffic light ahead of the car. Given, the red light detection from the TL_Detector, the Waypoint Node will create waypoints to decelerate the vehicle. The code below produces the waypoints for deceleration. Based on the stop line point provided by the TL detector, we compute the distance from the closest waypoint to the car to two points before the stop line waypoint. The two points before the stop line give us a buffer to stop. Essentially, it computes the distance to the stop location, and calculate the velocity based on an empirically determined formula.
-
-**...Need some explanation of the twist.twist.linear.x...**
+Another responsibility that is vital addresses the situation of a red...Need some explanation of the twist.twist.linear.x... traffic light ahead of the car. Given, the red light detection from the TL_Detector, the Waypoint Node will create waypoints to decelerate the vehicle. The code below produces the waypoints for deceleration. Based on the stop line point provided by the TL detector, we compute the distance from the closest waypoint to the car to two points before the stop line waypoint. The two points before the stop line give us a buffer to stop. Essentially, it computes the distance to the stop location, and calculate the velocity based on an empirically determined formula.
 
 
 ```
