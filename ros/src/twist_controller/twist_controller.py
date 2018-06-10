@@ -5,14 +5,30 @@ import rospy
 GAS_DENSITY = 2.858
 ONE_MPH = 0.44704
 
+'''
+
+This file defines the Controller class that performs the calculations to get the throttle, steering and brake inputs.
+
+The control function takes the current velocity, linear velocity, angular velocity, dbw enabled flag;
+and returns the throttle, brake and steering commands
+
+It uses functions from the YawController class in yaw_controller.py to calculate the steering and functions from PID class in PID.py to adjust the
+throttle depending on the velocity error.
+
+The brake torque is calculated based on the velocity error and throttle values. If the vehicle is stopped i.e. the reference linear velocity = 0 and the current velocity is below 0.1, the brake torque is a constant 400 N-m, else if the reference velocity is lower than the current velocity & the throttle input is below 0.1, the brake torque is calculated based on the deceleration required, the mass of the vehicle and the wheel radius
+
+It returns the calculated values only if the dbw module is enabled, else it returns a 0 value for all commands.
+
+'''
 
 class Controller(object):
     def __init__(self, vehicle_mass, fuel_capacity, brake_deadband, decel_limit,
     	accel_limit, wheel_radius, wheel_base, steer_ratio, max_lat_accel, max_steer_angle):
 
-        # TODO: Implement
+        # Create an object with class YawController
         self.yaw_controller = YawController(wheel_base, steer_ratio, 0.1, max_lat_accel, max_steer_angle)
 
+        # Define PID tuning parameters for the throttle controller
         kp = 0.3
         ki = 0.1
         kd = 0.
@@ -34,7 +50,7 @@ class Controller(object):
         self.last_time = rospy.get_time()
 
     def control(self, current_vel, dbw_enabled, linear_vel, angular_vel):
-        # TODO: Change the arg, kwarg list to suit your needs
+        # The function uses the YawController class and PID class to calculate the throttle, steering inputs and applies the brake based on throttle, velocity.
         # Return throttle, brake, steer
 
         if not dbw_enabled:
