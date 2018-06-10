@@ -4,7 +4,7 @@ This is the project repo for the final project of the Udacity Self-Driving Car N
 
 
 
-| Team RunCarla  | email |            
+| Team RunCarla  | email | 
 |:-----------------|:-------|
 | Shridhar Rasal  (Lead) |rasal1710@gmail.com|
 | Arjun Bhasin     |arjunbhasin.pec@gmail.com| 
@@ -22,20 +22,30 @@ In this project, we developed software to drive Carla, the Udacity autonomous ca
 Please Note: For successful installation and implementation, it is recommended to use ROS Kinetic on Ubuntu 16.04 running on a system with i7 CPU, 16GB of RAM, Nvidia GTX 1070 or better with CUDA 9.0 or above drivers installed.
 
 
-1. Clone/Download the repo.
-2. Install python dependencies
+#####Clone/Download [this repo](https://github.com/namoshri/RunCarla-Capstone)
+
+#####Install python dependencies
 ```bash
-cd CarND-Capstone
+cd RunCarla-Capstone
 pip install -r requirements.txt
 ```
-3. Make and run styx
+
+##### Download darknet_ros
+In order to install darknet_ros, clone the latest version using SSH (see [how to set up an SSH key](https://confluence.atlassian.com/bitbucket/set-up-an-ssh-key-728138079.html)) from this repository into workspace.
 ```bash
-cd ros
+cd ros/src
+git clone --recursive git@github.com:leggedrobotics/darknet_ros.git
+cd ../
+```
+
+#####Make and run styx
+```bash
 catkin_make
 source devel/setup.sh
 roslaunch launch/styx.launch
 ```
-4. Run the simulator
+#####Run the simulator
+------------
 
 ## ROS Architecture
 
