@@ -111,7 +111,7 @@ YOLO is a real-time objection detection algorithm developed by Joseph Redman. YO
 YOLOv3 is a version of YOLO that takes 320 x 320 image and produces a class and bounding box for all identified objects. The table below lists the YOLOv3 architecture layout. It is a 53 layer CNN that can predict 80 classes.  
 
 From the [original paper][3].
-![YOLOv3](./imgs/YOLOv3_CNN.PNG)
+![YOLOv3](./imgs/YOLOV3_CNN.PNG)
 
 YOLOv3 generates candidate features and bounding boxes at three different scales that are combined into a feature vector as input to the classification step as shown in the diagram below. See this web article for more insight, [What’s new in YOLO v3?][8].
 
